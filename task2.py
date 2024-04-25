@@ -9,6 +9,7 @@ from PIL import Image
 import PIL
 import numpy as np
 import io
+import os
 
 app = FastAPI()
 
@@ -51,6 +52,9 @@ async def predict_digit(model:Sequential,data_point:list)->str:
 
 # Function to load the trained model
 async def load_model(path:str) -> Sequential:
+    # input validation
+    assert os.path.exists(path)
+
     # Define a new Sequential model
     model2 = keras.Sequential()
     # Add layers to the model
@@ -65,6 +69,7 @@ async def load_model(path:str) -> Sequential:
 
 # Function to format the image for model prediction
 async def format_image(img:Image):
+    
     # Convert the image to grayscale
     gray_img = img.convert('L')
     # Resize the image to 28x28 pixels

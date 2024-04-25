@@ -9,6 +9,7 @@ from PIL import Image
 import PIL
 import numpy as np
 import io
+import os
 
 app = FastAPI()
 
@@ -23,10 +24,13 @@ async def predict(file: UploadFile):
     # Read the content of the uploaded file
     request_object_content = await file.read()
     # Open the image using PIL library
-    img = Image.open(io.BytesIO(request_object_content)) 
+    img = Image.open(io.BytesIO(request_object_content))
 
     # Convert the image data to a numpy array
     arr = np.array(img)
+
+    # input validation
+    assert arr.shape==(28,28)
     
     print(arr,arr.shape)
 
@@ -44,10 +48,14 @@ async def predict(file: UploadFile):
 
 # Function to predict the digit using the loaded model
 async def predict_digit(model:Sequential,data_point:list)->str:
+
     return str(np.argmax(model(np.array(data_point).reshape(1,784))))
 
 # Function to load the trained model
 async def load_model(path:str) -> Sequential:
+    # input validation
+    assert os.path.exists(path)
+
     # Define a new Sequential model
     model2 = keras.Sequential()
     # Add layers to the model
